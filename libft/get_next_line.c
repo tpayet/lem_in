@@ -12,81 +12,74 @@
 
 #include "libft.h"
 
-static char	*ft_relloc(char *str, int size)
+static void		ft_relloc(char **line, int size)
 {
-	char		*new;
+	char			*tmp;
 
-	if (str == NULL)
-		return (ft_strnew(size));
-	else
+	tmp = ft_strdup(*line);
+	if (tmp)
 	{
-		new = ft_strnew(ft_strlen(str) + size);
-		if (!new)
-			return (NULL);
-		ft_strcpy(new, str);
-		free(str);
-		return (new);
+		free(*line);
+		*line = (char*)malloc(sizeof(char) * size);
+		if (*line)
+		{
+			ft_strcpy(*line, tmp);
+			free(tmp);
+		}
 	}
 }
 
-static char	*ft_splitline(char *str, char **reste)
+static int		ft_read(char *buf, int fd, int ret)
 {
-	char		*new;
-	size_t		len;
-
-	len = 0;
-	while (str[len] != '\n' && str[len])
-		len++;
-	new = ft_strsub(str, 0, len);
-	free(*reste);
-	if (len < ft_strlen(str))
-		*reste = ft_strsub(str, len + 1, (ft_strlen(str) - (len + 1)));
-	free(str);
-	return (new);
-}
-
-static int	ft_readtoline(char **str, int fd)
-{
-	char		*buff;
-	int			ret;
-
-	buff = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1));
-	if (!buff)
+	ret = read(fd, buf, BUFF_SIZE);
+	if (ret < 0)
 		return (-1);
-	while ((ret = read(fd, buff, BUFF_SIZE)) >= 0)
-	{
-		buff[ret] = '\0';
-		*str = ft_strcat(ft_relloc(*str, ft_strlen(buff)), buff);
-		if (ft_memchr(*str, '\n', ft_strlen(*str)) != NULL)
-			break ;
-	}
-	free(buff);
+	buf[ret] = '\0';
 	return (ret);
 }
 
-int			get_next_line(int const fd, char **line)
+static int		ft_is_new_line(char **line, char *buf, int i)
 {
-	static char	*reste;
-	int			ret;
-	int			res;
+		ft_strncat(*line, buf, i);
+		ft_strcpy(buf, buf + i + 1);
+		return (1);
+}
 
-	res = 1;
-	ret = 0;
-	if (fd < 0 || !line)
-		return (-1);
-	*line = ft_strnew(1);
-	if (reste)
+static int		ft_no_new_line(char **line, char *buf, int j)
+{
+	j++;
+	ft_relloc(line, BUFF_SIZE * j + 1);
+	if (*line == NULL)
+		return (0);
+	ft_strcat(*line, buf);
+	buf[0] = '\0';
+	return (j);
+}
+
+int				get_next_line(int const fd, char **line)
+{
+	int				ret;
+	static char		buf[BUFF_SIZE + 1] = {'\0'};
+	int				i;
+	int				j;
+
+	if (!(*line = ft_strnew(BUFF_SIZE + 1)))
+			return (-1);
+	j = 1;
+	ret = 1;
+	while (ret > 0)
 	{
-		free(*line);
-		*line = ft_strdup(reste);
+		if (buf[0] == '\0')
+			if ((ret = ft_read(buf, fd, ret)) == -1)
+				return (-1);
+		i = 0;
+		while (buf[i] && buf[i] != '\n' && ret > 0)
+			i++;
+		if (buf[i] == '\n' && ret > 0)
+			return (ft_is_new_line(line, buf, i));
+		else if (ret > 0)
+			if ((j = ft_no_new_line(line, buf, j)) == 0)
+				return (-1);
 	}
-	if (ft_memchr(*line, '\n', ft_strlen(*line)) == NULL)
-		ret = ft_readtoline(line, fd);
-	if (ret < 0)
-		return (-1);
-	if (ret == 0)
-		return (2);
-	*line = ft_splitline(*line, &reste);
-	res = ((ret < BUFF_SIZE) && *line[0] == '\0') ? 0 : 1;
-	return (res);
+	return (ret);
 }
