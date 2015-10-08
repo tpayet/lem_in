@@ -1,0 +1,64 @@
+construct ant's list
+{
+	read number of ants
+	malloc array of ants
+	attribute to each ants an index and a room_index of begining
+}
+
+construct room's array
+{
+	search first room
+	{
+		for_each linked room {
+			link in next_array or prev_array depending on weight
+			give name and index to room
+			give weight(i)
+			for each linked room {
+				link the room in next_array or prev_array depending on weight
+				if !room does not already exist {
+					give name and index to room
+					give weight(i++)
+					for each linked room{
+						...
+					}
+				}
+			}
+		}
+	}
+}
+
+unless all ants are arrived {
+	sort ant with lesser weighted room
+	{
+		foreach ant
+		if ant.next.room_weight < ant.room_weight
+			change places
+	}
+
+	for each ant
+	{
+		check best_option_room_where_I_can_go
+		{
+			foreach room in next_array
+			{
+				return smallest weighted empty room with biggest choices
+				if smallest weight == actual weight {
+					check if moving can improve other ants
+						yes give target
+					else
+						no continue
+				}
+			}
+			return target
+			if noroom
+				continue
+		}
+		if can_move {
+			empty actual room
+			go_to target_room && move ant
+			fill room
+		}
+		else
+			passe_ton_tour
+	}
+}
