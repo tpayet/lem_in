@@ -12,7 +12,15 @@
 
 #include "lem_in.h"
 
-int	main(void)
+int	main(int argc, char **argv)
 {
+	if (argc != 2)
+	{
+		ft_putstr("usage: ./lem-in __MAP__\n");
+	}
+	else
+	{
+		ft_putstr(argv[1]);
+	}
 	return (0);
 }
