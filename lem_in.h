@@ -15,6 +15,9 @@
 
 # include "libft/libft.h"
 
+# define E_ARG		974
+# define E_PARSE	123
+
 typedef struct s_room	t_room;
 struct		s_room
 {
@@ -30,14 +33,28 @@ typedef struct s_ant	t_ant;
 struct		s_ant
 {
 	int		index;
-	t_room	*room;
+	char	*room;
+	t_ant	*next;
 };
 
 /*
 ** Parsing
 */
 
-t_ant		**construct_ants_array(char *arg);
-t_room		**construct_rooms_array(char *arg);
+int			parse_map(t_room ***rooms, t_ant **ants);
+t_ant		**construct_ants_array(char *parse);
+// t_room		**construct_rooms_array(char *parse);
+
+/*
+** Error handling
+*/
+
+int			ft_error(int error, char *msg);
+
+/*
+** LEMIN
+*/
+
+// void		lem_in(t_room **rooms, t_ant *ants);
 
 #endif

@@ -40,9 +40,9 @@ static int		ft_read(char *buf, int fd, int ret)
 
 static int		ft_is_new_line(char **line, char *buf, int i)
 {
-		ft_strncat(*line, buf, i);
-		ft_strcpy(buf, buf + i + 1);
-		return (1);
+	ft_strncat(*line, buf, i);
+	ft_strcpy(buf, buf + i + 1);
+	return (1);
 }
 
 static int		ft_no_new_line(char **line, char *buf, int j)
@@ -64,7 +64,7 @@ int				get_next_line(int const fd, char **line)
 	int				j;
 
 	if (!(*line = ft_strnew(BUFF_SIZE + 1)))
-			return (-1);
+		return (-1);
 	j = 1;
 	ret = 1;
 	while (ret > 0)

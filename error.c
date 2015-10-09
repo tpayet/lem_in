@@ -1,42 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpayet <tpayet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/10/08 19:07:56 by tpayet            #+#    #+#             */
-/*   Updated: 2015/10/08 19:07:57 by tpayet           ###   ########.fr       */
+/*   Created: 2015/10/09 12:22:41 by tpayet            #+#    #+#             */
+/*   Updated: 2015/10/09 12:22:42 by tpayet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 
-int	main(int argc, char **argv)
+int	ft_error(int error, char *msg)
 {
-	t_room	**rooms;
-	t_ant	*ants;
-
-	rooms = NULL;
-	ants = NULL;
-	if (argc != 1)
+	if (error == E_ARG)
 	{
-		exit(ft_error(E_ARG, argv[0]));
+		ft_putendl_fd("usage: ", 2);
+		ft_putendl_fd(msg, 2);
+		ft_putendl_fd("\n", 2);
+		return (EXIT_FAILURE);
 	}
 	else
 	{
-		parse_map(&rooms, &ants);
-		// lem_in(rooms, ants);
+		ft_putendl_fd(msg, 2);
+		return (EXIT_FAILURE);
 	}
-	// char	*buff;
-	// buff = NULL;
-	// while (get_next_line(0, &buff) >= 0)
-	// {
-	// 	ft_putstr(buff);
-	// 	if (*buff == 0)
-	// 	{
-	// 		exit(1);
-	// 	}
-	// }
-	return (0);
 }

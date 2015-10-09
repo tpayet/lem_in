@@ -6,7 +6,7 @@
 #    By: tpayet <tpayet@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/10/08 19:08:14 by tpayet            #+#    #+#              #
-#    Updated: 2015/10/08 19:08:16 by tpayet           ###   ########.fr        #
+#    Updated: 2015/10/09 12:38:57 by tpayet           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,14 @@ NAME = lem-in
 
 CC = clang
 
-CFLAGS = -Wall -Wextra -Werror -Wpedantic -O2
+CFLAGS = 
+#-Wall -Wextra -Werror -Wpedantic -O2
 
 LIBFT = ./libft/
 
-SRCS = main.c
+SRCS = main.c \
+	   parsing.c \
+	   error.c
 
 #shell colors#
 RESET = \033[00m
