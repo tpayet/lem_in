@@ -20,8 +20,7 @@ CFLAGS =
 LIBFT = ./libft/
 
 SRCS = main.c \
-	   parsing.c \
-	   error.c
+
 
 #shell colors#
 RESET = \033[00m

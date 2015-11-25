@@ -14,42 +14,44 @@
 # define __LEM_IN_H
 
 # include "libft/libft.h"
+# include <stdlib.h>
+# include <fcntl.h>
 
 # define E_ARG		974
 # define E_PARSE	123
 
 typedef struct s_room	t_room;
-struct		s_room
+struct					s_room
 {
-	char	*name;
-	int		index;
-	int		weight;
-	int		full;
-	t_room	**next_rooms_arr;
-	t_room	**prev_rooms_arr;
+	char				*name;
+	int					weight;
+	char				*ant;
+	int					special;
+	t_room				*next;
+	struct s_link	*links;
 };
 
-typedef struct s_ant	t_ant;
-struct		s_ant
+typedef struct s_link	t_link;
+struct					s_link
 {
-	int		index;
-	char	*room;
-	t_ant	*next;
+	t_room				*room;
+	t_link				*next;
 };
+
 
 /*
 ** Parsing
 */
 
-int			parse_map(t_room ***rooms, t_ant **ants);
-t_ant		**construct_ants_array(char *parse);
+// int			parse_map(t_room ***rooms, t_ant **ants);
+// t_ant		**construct_ants_array(char *parse);
 // t_room		**construct_rooms_array(char *parse);
 
 /*
 ** Error handling
 */
-
-int			ft_error(int error, char *msg);
+// 
+// int			ft_error(int error, char *msg);
 
 /*
 ** LEMIN
