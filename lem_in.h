@@ -26,7 +26,7 @@ struct					s_room
 {
 	char				*name;
 	int					weight;
-	char				*ant;
+	int					ant;
 	int					special;
 	int					index;
 	t_room				*next;
