@@ -12,7 +12,7 @@
 
 #include "lem_in.h"
 
-t_room	*new_room(const char *name, int special)
+t_room	*new_room(const char *name, const int special)
 {
 	t_room	*new;
 
@@ -57,7 +57,7 @@ void	link_add(t_room *room, t_link *new)
 	room->links = new;
 }
 
-void	fatal(char *msg)
+void	fatal(const char *msg)
 {
 	ft_putendl_fd(msg, 2);
 	exit(1);
@@ -96,20 +96,28 @@ void	seek_n_link(const char *str, t_room **room)
 ** A FREE LES STRSPLIT
 */
 
-void	parse_line(t_room **room, const char *str, int special)
+int		parse_line(t_room **room, const char *str, const int special)
 {
-	if (ft_strchr(str, '-'))
-		seek_n_link(str, room);
-	else if (ft_strchr(str, ' '))
+	if (!ft_strcmp("##start", str))
+		return (START);
+	else if (!ft_strcmp("##end", str))
+		return (END);
+	else
 	{
-		if (!(*room))
-			*room = new_room((ft_strsplit(str, ' '))[0], special);
-		else
-			room_add(room, new_room((ft_strsplit(str, ' '))[0], special));
+		if (ft_strchr(str, '-'))
+			seek_n_link(str, room);
+		else if (ft_strchr(str, ' '))
+		{
+			if (!(*room))
+				*room = new_room((ft_strsplit(str, ' '))[0], special);
+			else
+				room_add(room, new_room((ft_strsplit(str, ' '))[0], special));
+		}
+		return (NORMAL);
 	}
 }
 
-void gimme_weight(t_room *room, int i)
+void	gimme_weight(t_room *room, const int i)
 {
 	t_link	*tmp;
 
@@ -126,10 +134,11 @@ void gimme_weight(t_room *room, int i)
 	}
 }
 
-t_room	*find_special(t_room *room, int special)
+t_room	*find_special(t_room *room, const int special)
 {
-	t_room *tmp = room;
+	t_room *tmp;
 
+	tmp = room;
 	while (tmp)
 	{
 		if (tmp->special == special)
@@ -139,7 +148,7 @@ t_room	*find_special(t_room *room, int special)
 	return (NULL);
 }
 
-t_room	*read_file(char *path)
+t_room	*read_file(const char *path, int *const ant)
 {
 	int		fd;
 	char	*str;
@@ -149,32 +158,27 @@ t_room	*read_file(char *path)
 	special = NORMAL;
 	fd = open(path, O_RDONLY);
 	room = NULL;
+	if (get_next_line(fd, &str))
+		*ant = ft_atoi(str);
 	while (get_next_line(fd, &str) > 0)
 	{
-		ft_putendl(str);
-		if (!strcmp("##start", str))
-			special = START;
-		else if (!ft_strcmp("##end", str))
-			special = END;
-		else
-		{
-			parse_line(&room, str, special);
-			special = NORMAL;
-		}
+		if (str[0] == '#' && str[1] != '#')
+			continue ;
+		special = parse_line(&room, str, special);
 	}
 	if (close(fd) != 0)
 		fatal("Error while closing read file");
 	gimme_weight(find_special(room, END), 0);
+	if (((find_special(room, START))->weight) == -1)
+		fatal("ERROR");
 	return (room);
 }
 
-int		main(int argc, char **argv)
+void	debug(const t_room *room)
 {
-	if (argc != 2)
-		fatal("Please give file as argument.");
-	t_room *room = read_file(argv[1]);
-	t_room *tmp = room;
+	t_room *tmp = (t_room *)room;
 	t_link *tmp2 = NULL;
+	ft_putendl("-------------------------");
 	while (tmp)
 	{
 		ft_putstr("Room->name : ");
@@ -192,8 +196,20 @@ int		main(int argc, char **argv)
 		ft_putchar('\n');
 		ft_putstr("Weight : ");
 		ft_putnbr(tmp->weight);
-		ft_putendl("\n--------------------------------");
+		ft_putendl("\n-------------------------");
 		tmp = tmp->next;
 	}
+}
+
+int		main(int argc, char **argv)
+{
+	t_room	*rooms;
+	int		ant;
+
+	ant = 0;
+	if (argc != 2)
+		fatal("Please give file as argument.");
+	rooms = read_file(argv[1], &ant);
+	debug(rooms);
 	return (0);
 }
