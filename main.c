@@ -24,7 +24,7 @@ t_room	*new_room(const char *name, const int special)
 		new->name = NULL;
 	new->special = special;
 	new->weight = -1;
-	new->ant = NULL;
+	new->ant = 0;
 	new->next = NULL;
 	new->links = NULL;
 	return (new);
@@ -185,7 +185,9 @@ void	debug(const t_room *room)
 		ft_putendl(tmp->name);
 		ft_putstr("Room->special : ");
 		ft_putnbr(tmp->special);
-		ft_putstr("\nLinks :");
+		ft_putstr("\nRoom->ant : ");
+		ft_putnbr(tmp->ant);
+		ft_putstr("\nRoom->links :");
 		tmp2 = tmp->links;
 		while (tmp2)
 		{
@@ -194,10 +196,61 @@ void	debug(const t_room *room)
 			tmp2 = tmp2->next;
 		}
 		ft_putchar('\n');
-		ft_putstr("Weight : ");
+		ft_putstr("Room->weight : ");
 		ft_putnbr(tmp->weight);
 		ft_putendl("\n-------------------------");
 		tmp = tmp->next;
+	}
+}
+
+int		room_cmp(t_room *r1, t_room *r2)
+{
+	return (r1->weight - r2->weight);
+}
+
+void	room_insert(t_room **list, t_room *elem)
+{
+	t_room *tmp;
+
+	tmp = *list;
+	while (tmp)
+	{
+		if (tmp->next)
+		{
+			if (room_cmp(tmp->next, elem) <= 0)
+				tmp = tmp->next;
+			else
+			{
+				elem->next = tmp->next;
+				tmp->next = elem;
+				return ;
+			}
+		}
+		else
+		{
+			tmp->next = elem;
+			elem->next = NULL;
+			return ;
+		}
+	}
+}
+
+void	sort_rooms(t_room **rooms)
+{
+	t_room *tmp;
+	t_room *buff;
+
+	tmp = *rooms;
+	while (tmp && tmp->next)
+	{
+		if (room_cmp(tmp, tmp->next) > 0)
+		{
+			buff = tmp->next;
+			tmp->next = buff->next;
+			room_insert(rooms, buff);
+			tmp = *rooms;
+		}
+			tmp = tmp->next;
 	}
 }
 
@@ -210,6 +263,15 @@ int		main(int argc, char **argv)
 	if (argc != 2)
 		fatal("Please give file as argument.");
 	rooms = read_file(argv[1], &ant);
+	(find_special(rooms, START))->ant = ant;
+	// while (((find_special(rooms, START))->ant == 0) && \
+	// 	((find_special(rooms, END))->ant == ant))
+	// {
+
+	// }
+	debug(rooms);
+
+	sort_rooms(&rooms);
 	debug(rooms);
 	return (0);
 }
