@@ -14,8 +14,7 @@ NAME = lem-in
 
 CC = clang
 
-CFLAGS = 
-#-Wall -Wextra -Werror -Wpedantic -O2
+CFLAGS = -Wall -Wextra -Werror -Wpedantic -O2
 
 LIBFT = ./libft/
 
