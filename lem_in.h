@@ -17,8 +17,9 @@
 # include <stdlib.h>
 # include <fcntl.h>
 
-# define E_ARG		974
-# define E_PARSE	123
+# define START		0
+# define END		2
+# define NORMAL		1
 
 typedef struct s_room	t_room;
 struct					s_room
@@ -27,6 +28,7 @@ struct					s_room
 	int					weight;
 	char				*ant;
 	int					special;
+	int					index;
 	t_room				*next;
 	struct s_link	*links;
 };

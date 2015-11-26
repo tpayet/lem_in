@@ -63,23 +63,137 @@ void	fatal(char *msg)
 	exit(1);
 }
 
-void	read_file(char *path)
+void	seek_n_link(const char *str, t_room **room)
 {
-	int fd;
-	char *str;
+	char	**arr;
+	t_room	*tmp;
+	t_room	*tmp2;
 
+	arr = ft_strsplit(str, '-');
+	tmp = *room;
+	tmp2 = *room;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->name, arr[0]))
+		{
+			while (tmp2)
+			{
+				if (!ft_strcmp(tmp2->name, arr[1]))
+				{
+					link_add(tmp, new_link(&tmp2));
+					link_add(tmp2, new_link(&tmp));
+					break ;
+				}
+				tmp2 = tmp2->next;
+			}
+			break ;
+		}
+		tmp = tmp->next;
+	}
+}
+
+/*
+** A FREE LES STRSPLIT
+*/
+
+void	parse_line(t_room **room, const char *str, int special)
+{
+	if (ft_strchr(str, '-'))
+		seek_n_link(str, room);
+	else if (ft_strchr(str, ' '))
+	{
+		if (!(*room))
+			*room = new_room((ft_strsplit(str, ' '))[0], special);
+		else
+			room_add(room, new_room((ft_strsplit(str, ' '))[0], special));
+	}
+}
+
+void gimme_weight(t_room *room, int i)
+{
+	t_link	*tmp;
+
+	tmp = NULL;
+	if (room->weight == -1 || room->weight > i)
+	{
+		room->weight = i;
+		tmp = room->links;
+		while (tmp)
+		{
+			gimme_weight(tmp->room, (i + 1));
+			tmp = tmp->next;
+		}
+	}
+}
+
+t_room	*find_special(t_room *room, int special)
+{
+	t_room *tmp = room;
+
+	while (tmp)
+	{
+		if (tmp->special == special)
+			return (tmp);
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
+
+t_room	*read_file(char *path)
+{
+	int		fd;
+	char	*str;
+	t_room	*room;
+	int		special;
+
+	special = NORMAL;
 	fd = open(path, O_RDONLY);
-	while (get_next_line(fd, &str))
+	room = NULL;
+	while (get_next_line(fd, &str) > 0)
 	{
 		ft_putendl(str);
+		if (!strcmp("##start", str))
+			special = START;
+		else if (!ft_strcmp("##end", str))
+			special = END;
+		else
+		{
+			parse_line(&room, str, special);
+			special = NORMAL;
+		}
 	}
-	return ;
+	if (close(fd) != 0)
+		fatal("Error while closing read file");
+	gimme_weight(find_special(room, END), 0);
+	return (room);
 }
 
 int		main(int argc, char **argv)
 {
 	if (argc != 2)
 		fatal("Please give file as argument.");
-	read_file(argv[1]);
+	t_room *room = read_file(argv[1]);
+	t_room *tmp = room;
+	t_link *tmp2 = NULL;
+	while (tmp)
+	{
+		ft_putstr("Room->name : ");
+		ft_putendl(tmp->name);
+		ft_putstr("Room->special : ");
+		ft_putnbr(tmp->special);
+		ft_putstr("\nLinks :");
+		tmp2 = tmp->links;
+		while (tmp2)
+		{
+			ft_putstr(" ");
+			ft_putstr(tmp2->room->name);
+			tmp2 = tmp2->next;
+		}
+		ft_putchar('\n');
+		ft_putstr("Weight : ");
+		ft_putnbr(tmp->weight);
+		ft_putendl("\n--------------------------------");
+		tmp = tmp->next;
+	}
 	return (0);
 }
