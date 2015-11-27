@@ -21,44 +21,50 @@
 # define END		2
 # define NORMAL		1
 
-typedef struct s_room	t_room;
-struct					s_room
+struct s_link;
+
+typedef struct		s_room
 {
-	char				*name;
-	int					weight;
-	int					ant;
-	int					special;
-	int					index;
-	t_room				*next;
+	char			*name;
+	char			*a_name;
+	int				weight;
+	int				ant;
+	int				special;
+	int				index;
+	struct s_room	*next;
 	struct s_link	*links;
-};
+}					t_room;
 
-typedef struct s_link	t_link;
-struct					s_link
+typedef struct		s_link
 {
-	t_room				*room;
-	t_link				*next;
-};
-
-
-/*
-** Parsing
-*/
-
-// int			parse_map(t_room ***rooms, t_ant **ants);
-// t_ant		**construct_ants_array(char *parse);
-// t_room		**construct_rooms_array(char *parse);
+	struct s_link	*next;
+	t_room			*room;
+}					t_link;
 
 /*
-** Error handling
+** MAIN.C
 */
-// 
-// int			ft_error(int error, char *msg);
+void				fatal(const char *msg);
 
 /*
-** LEMIN
+** STRUCT.C
 */
+t_room				*find_special(t_room *room, const int special);
+void				gimme_weight(t_room *room, const int i);
+char				**ant_array(int ant);
+void				debug_arr(char **arr);
 
-// void		lem_in(t_room **rooms, t_ant *ants);
+/*
+** ROOM.C
+*/
+t_room				*new_room(const char *name, const int special);
+void				room_add(t_room **list, t_room *new);
+t_room				*sort_room(t_room *room);
+void				debug(const t_room *room);
+
+/*
+** PARSING.C
+*/
+t_room				*read_file(const char *path, int *const ant);
 
 #endif

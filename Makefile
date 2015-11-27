@@ -19,6 +19,9 @@ CFLAGS = -Wall -Wextra -Werror -Wpedantic -O2
 LIBFT = ./libft/
 
 SRCS = main.c \
+		room.c \
+		parsing.c \
+		struct.c
 
 
 #shell colors#

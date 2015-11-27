@@ -12,73 +12,97 @@
 
 #include "lem_in.h"
 
-// char	*find_start(char *str)
-// {
-// 	char	**array;
-// 	int		i;
+static t_link	*new_link(t_room **linked_room)
+{
+	t_link	*new;
 
-// 	i = 0;
-// 	array = ft_strsplit(str, '\n');
-// 	while (array[i])
-// 	{
-// 		if (!ft_strcmp(array[i], "##start"))
-// 			return (array[i + 1]);
-// 		i++;
-// 	}
-// 	return (NULL);
-// }
+	if (!(new = malloc(sizeof(t_link))) || !linked_room)
+		return (NULL);
+	new->room = *linked_room;
+	new->next = NULL;
+	return (new);
+}
 
-// t_ant	**construct_ants_list(char *parse)
-// {
-// 	int		n;
-// 	int		i;
-// 	t_ant	**ants;
-// 	char	*start;
+static void		link_add(t_room *room, t_link *new)
+{
+	if (!new || !room)
+		return ;
+	new->next = room->links;
+	room->links = new;
+}
 
-// 	i = 0;
-// 	n = ft_atoi(parse);
-// 	start = find_start(parse);
-// 	ants = malloc(sizeof(t_ant) * (n + 1));
-// 	while (i < n)
-// 	{
-// 		ants[i] = malloc(sizeof(t_ant));
-// 		ants[i]->index = i + 1;
-// 		ants[i]->room = ft_strdup(start);
-// 		i++;
-// 	}
-// 	ants[n] = NULL;
-// 	return (ants);
-// }
+static void		seek_n_link(const char *str, t_room **room)
+{
+	char	**arr;
+	t_room	*tmp;
+	t_room	*tmp2;
 
+	arr = ft_strsplit(str, '-');
+	tmp = *room;
+	tmp2 = *room;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->name, arr[0]))
+		{
+			while (tmp2)
+			{
+				if (!ft_strcmp(tmp2->name, arr[1]))
+				{
+					link_add(tmp, new_link(&tmp2));
+					link_add(tmp2, new_link(&tmp));
+					break ;
+				}
+				tmp2 = tmp2->next;
+			}
+			break ;
+		}
+		tmp = tmp->next;
+	}
+}
 
-// ** parse_map takes pointers to rooms'array and ants'list
-// ** and returns and 0 on success or any error
-// ** buff is buffer for get_next_line, parse is the whole file which was read
-// ** and parse is send to functions for constructions of rooms'array and
-// ** ants'list
+static int		parse_line(t_room **room, const char *str, const int special)
+{
+	if (!ft_strcmp("##start", str))
+		return (START);
+	else if (!ft_strcmp("##end", str))
+		return (END);
+	else
+	{
+		if (ft_strchr(str, '-'))
+			seek_n_link(str, room);
+		else if (ft_strchr(str, ' '))
+		{
+			if (!(*room))
+				*room = new_room((ft_strsplit(str, ' '))[0], special);
+			else
+				room_add(room, new_room((ft_strsplit(str, ' '))[0], special));
+		}
+		return (NORMAL);
+	}
+}
 
+t_room			*read_file(const char *path, int *const ant)
+{
+	int		fd;
+	char	*str;
+	t_room	*room;
+	int		special;
 
-// int		parse_map(t_room ***rooms, t_ant **ants)
-// {
-// 	char	*buff;
-// 	char	*parse;
-
-// 	buff = NULL;
-// 	parse = NULL;
-// 	while (get_next_line(0, &buff) >= 0)
-// 	{
-// 		if (!parse)
-// 			parse = ft_strcpy(ft_strnew(ft_strlen(buff)), buff);
-// 		else
-// 			parse = ft_strcat(ft_strcat(parse, "\n"), buff);
-// 		if (*buff == 0)
-// 			break ;
-// 	}
-// 	if (parse == NULL)
-// 		return (E_PARSE);
-// 	else
-// 	{
-// 		ants = construct_ants_list(parse);
-// 		return (0);
-// 	}
-// }
+	special = NORMAL;
+	fd = open(path, O_RDONLY);
+	room = NULL;
+	if (get_next_line(fd, &str))
+		*ant = ft_atoi(str);
+	while (get_next_line(fd, &str) > 0)
+	{
+		if (str[0] == '#' && str[1] != '#')
+			continue ;
+		special = parse_line(&room, str, special);
+	}
+	if (close(fd) != 0)
+		fatal("Error while closing read file");
+	gimme_weight(find_special(room, END), 0);
+	if (((find_special(room, START))->weight) == -1)
+		fatal("ERROR");
+	return (room);
+}
