@@ -83,9 +83,10 @@ void			debug(const t_room *room)
 			ft_putstr(tmp2->room->name);
 			tmp2 = tmp2->next;
 		}
-		ft_putchar('\n');
-		ft_putstr("Room->weight : ");
+		ft_putstr("\nRoom->weight : ");
 		ft_putnbr(tmp->weight);
+		ft_putstr("\nRoom->a_name : ");
+		ft_putstr(tmp->a_name);
 		tmp = tmp->next;
 	}
 }
