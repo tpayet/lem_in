@@ -29,7 +29,7 @@ t_room	*best_place_to_go(const t_room *room)
 	{
 		if (tmp_link->room->special == END)
 			return (tmp_link->room);
-		if (tmp_link->room->ant == 0 && tmp_link->room->weight < room->weight)
+		if (tmp_link->room->ant == 0 && tmp_link->room->weight <= room->weight)
 			if (!best_room || best_room->weight > tmp_link->room->weight)
 				best_room = tmp_link->room;
 		tmp_link = tmp_link->next;
@@ -79,12 +79,14 @@ int		main_loop(t_room *rooms, const int n_ant, char **arr_ant)
 	}
 }
 
-int		main(void)
+int		main(int ac, char **av)
 {
 	t_room	*rooms;
 	int		ant;
 	char	**arr_ant;
 
+	if (ac != 1 && *av)
+		fatal("ERROR");
 	rooms = sort_room(read_file(&ant));
 	arr_ant = ant_array(ant);
 	return (main_loop(rooms, ant, arr_ant));

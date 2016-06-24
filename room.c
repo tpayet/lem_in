@@ -60,33 +60,3 @@ t_room			*sort_room(t_room *room)
 	}
 	return (room);
 }
-
-void			debug(const t_room *room)
-{
-	t_room *tmp;
-	t_link *tmp2;
-
-	tmp = (t_room *)room;
-	while (tmp)
-	{
-		ft_putstr("\n--------------------\nRoom->name : ");
-		ft_putendl(tmp->name);
-		ft_putstr("Room->special : ");
-		ft_putnbr(tmp->special);
-		ft_putstr("\nRoom->ant : ");
-		ft_putnbr(tmp->ant);
-		ft_putstr("\nRoom->links :");
-		tmp2 = tmp->links;
-		while (tmp2)
-		{
-			ft_putstr(" ");
-			ft_putstr(tmp2->room->name);
-			tmp2 = tmp2->next;
-		}
-		ft_putstr("\nRoom->weight : ");
-		ft_putnbr(tmp->weight);
-		ft_putstr("\nRoom->a_name : ");
-		ft_putstr(tmp->a_name);
-		tmp = tmp->next;
-	}
-}

@@ -99,6 +99,7 @@ t_room			*read_file(int *const ant)
 		if (str[0] == '#' && str[1] != '#')
 			continue ;
 		special = parse_line(&room, str, special);
+		free(str);
 	}
 	gimme_weight(find_special(room, END), 0);
 	if (!(start_room = find_special(room, START)))
