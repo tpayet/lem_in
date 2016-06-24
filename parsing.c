@@ -81,28 +81,29 @@ static int		parse_line(t_room **room, const char *str, const int special)
 	}
 }
 
-t_room			*read_file(const char *path, int *const ant)
+t_room			*read_file(int *const ant)
 {
-	int		fd;
 	char	*str;
 	t_room	*room;
+	t_room	*start_room;
 	int		special;
 
 	special = NORMAL;
-	fd = open(path, O_RDONLY);
 	room = NULL;
-	if (get_next_line(fd, &str))
+	if (get_next_line(0, &str))
 		*ant = ft_atoi(str);
-	while (get_next_line(fd, &str) > 0)
+	ft_putendl(str);
+	while (get_next_line(0, &str) > 0)
 	{
+		ft_putendl(str);
 		if (str[0] == '#' && str[1] != '#')
 			continue ;
 		special = parse_line(&room, str, special);
 	}
-	if (close(fd) != 0)
-		fatal("Error while closing read file");
 	gimme_weight(find_special(room, END), 0);
-	if (((find_special(room, START))->weight) == -1)
+	if (!(start_room = find_special(room, START)))
+		fatal("ERROR");
+	else if ((start_room->weight) == -1)
 		fatal("ERROR");
 	return (room);
 }

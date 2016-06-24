@@ -17,25 +17,14 @@ char	**ant_array(int ant)
 	char **arr;
 
 	arr = (char **)malloc(sizeof(char *) * (ant + 1));
-	arr[ant--] = NULL;
+	arr[ant] = NULL;
+	ant -= 1;
 	while (ant >= 0)
 	{
-		arr[ant] = ft_strjoin("L", ft_itoa(ant));
+		arr[ant] = ft_strjoin("L", ft_itoa(ant + 1));
 		ant--;
 	}
 	return (arr);
-}
-
-void	debug_arr(char **arr)
-{
-	int i;
-
-	i = 0;
-	while (arr[i])
-	{
-		ft_putstr(arr[i++]);
-		ft_putstr("; ");
-	}
 }
 
 void	gimme_weight(t_room *room, const int i)
@@ -43,6 +32,8 @@ void	gimme_weight(t_room *room, const int i)
 	t_link	*tmp;
 
 	tmp = NULL;
+	if (!room)
+		fatal("ERROR");
 	if (room->weight == -1 || room->weight > i)
 	{
 		room->weight = i;
@@ -67,4 +58,22 @@ t_room	*find_special(t_room *room, const int special)
 		tmp = tmp->next;
 	}
 	return (NULL);
+}
+
+/*
+** PERMET DE DEPLACER UNE FOURMI DUNE SALLE A LAUTRE
+*/
+
+void	ant_move(t_room *actual, t_room *next)
+{
+	actual->ant -= 1;
+	next->ant += 1;
+	next->a_name = ft_strdup(actual->a_name);
+	free(actual->a_name);
+	actual->a_name = NULL;
+	ft_putstr(actual->a_name);
+	ft_putstr(next->a_name);
+	ft_putstr("->");
+	ft_putstr(next->name);
+	ft_putchar(' ');
 }

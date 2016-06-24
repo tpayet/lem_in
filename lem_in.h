@@ -45,6 +45,9 @@ typedef struct		s_link
 ** MAIN.C
 */
 void				fatal(const char *msg);
+t_room				*best_place_to_go(const t_room *room);
+int					main_loop(t_room *rooms, const int n_ant, char **arr_ant);
+char				**first_round(t_room *first_room, char **arr_ant);
 
 /*
 ** STRUCT.C
@@ -52,7 +55,7 @@ void				fatal(const char *msg);
 t_room				*find_special(t_room *room, const int special);
 void				gimme_weight(t_room *room, const int i);
 char				**ant_array(int ant);
-void				debug_arr(char **arr);
+void				ant_move(t_room *actual, t_room *next);
 
 /*
 ** ROOM.C
@@ -65,6 +68,6 @@ void				debug(const t_room *room);
 /*
 ** PARSING.C
 */
-t_room				*read_file(const char *path, int *const ant);
+t_room				*read_file(int *const ant);
 
 #endif
