@@ -12,7 +12,7 @@
 
 NAME = lem-in
 
-CC = clang
+CC = gcc
 
 CFLAGS = -Wall -Wextra -Werror -Wpedantic -O2
 
